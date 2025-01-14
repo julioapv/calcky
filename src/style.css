@@ -17,16 +17,25 @@
 .calculator-body {
   height: 600px;
   width: 400px;
-  padding: 10px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
   gap: 5px;
+  border-radius: 25px;
   background-color: gray;
 }
 
 .calculator-display {
+  display: flex;
+  align-items: center;
+  justify-content: end;
   height: 150px;
-  background: lightgrey;
+  padding: 2rem;
+  font-weight: bold;
+  font-size: 3rem;
+  border-radius: 10px 10px 0 0;
+  background: white;
+
 }
 
 .buttons-container {
@@ -36,6 +45,7 @@
   grid-template-rows: repeat(5, 1fr);
   gap: 2px;
   padding: 5px;
+  border-radius: 0 0 10px 10px;
   background: black;
 }
 
@@ -61,4 +71,8 @@
 
 .secondary-operator-button {
   background: lightblue;
+}
+
+.disabled {
+  
 }
