@@ -1,3 +1,37 @@
+const buttonLabels = [
+  'AC', '+/-', '%', '/',
+  '7', '8', '9', '*',
+  '4', '5', '6', '-',
+  '1', '2', '3', '+',
+  '0', '.', '='
+];
+
+function generateBtns() {
+  const container = document.querySelector(".buttons-container");
+
+  buttonLabels.forEach(label => {
+    const button = document.createElement('button');
+    button.textContent = label;
+
+    if(label === "=") {
+      button.classList.add("operator-button", "equal-button")
+    } else if(!isNaN(parseInt(label))) {
+      button.classList.add("num-button")
+    } else if(
+      label === "AC" || 
+      label === "+/-" ||
+      label === "%" ||
+      label === "/") {
+      button.classList.add("secondary-operator-button")
+    }
+      else if(isNaN(parseInt(label))){
+      button.classList.add("operator-button")
+    }
+
+    container.appendChild(button)
+  })
+};
+
 function add(a, b) {
   return a + b;
 };
@@ -42,4 +76,4 @@ function operate(numA, numB, operator) {
 };
 
 console.log(operate(10, 3, "multiply"));
-
+generateBtns();
