@@ -8,10 +8,46 @@ const buttonLabels = [
   '0', '.', '='
 ];
 
+const keyMap = {
+  "0": "0",
+  "1": "1",
+  "2": "2",
+  "3": "3",
+  "4": "4",
+  "5": "5",
+  "6": "6",
+  "7": "7",
+  "8": "8",
+  "9": "9",
+  ".": ".",
+  "+": "+",
+  "-": "-",
+  "*": "*",
+  "/": "/",
+  "%": "%",
+  "Enter": "=",
+  "Backspace": "AC",
+  "Escape": "AC",
+};
+
 let numberA = "";
 let numberB = "";
 let operator = null;
-let currentInputState = "A"; // To help us track in what part of the of the process we're in ("A", "OPERATOR", "B")
+let currentInputState = "A";
+
+document.addEventListener("keydown", (event) => {
+  const key = event.key;
+  const buttonLabel = keyMap[key]
+  
+  if(buttonLabel) {
+    const button = Array.from(document.querySelectorAll("button")).find(
+      (btn) => btn.textContent === buttonLabel
+    );
+    if(button) {
+      button.click()
+    }
+  }
+})
 
 function generateBtns() {
   const container = document.querySelector(".buttons-container");
@@ -31,7 +67,7 @@ function generateBtns() {
     }
 
     button.addEventListener("click", () => {
-      handleButtonClick(label, button);
+      handleButtonClick(label);
     })
 
     container.appendChild(button)
@@ -39,7 +75,7 @@ function generateBtns() {
 };
 
 function handleButtonClick(value) {
-  if (!isNaN(parseInt(value)) || value === ".") {
+  if(!isNaN(parseInt(value)) || value === ".") {
     //Handle number or decimal input
     if(currentInputState === "A") {
       if(value === "." && numberA.includes(".")) {
@@ -54,16 +90,49 @@ function handleButtonClick(value) {
       numberB += value;
       calculatorDisplay.innerText = numberB;
     }
+    //Handle input of negative numbers
+  } else if(value === "+/-") {
+    if(currentInputState === "A") {
+      if(value === "+/-" && numberA.includes("-")) {
+        return;
+      }
+      numberA = "-" + numberA;
+      calculatorDisplay.innerText = numberA;
+    } else if(currentInputState === "B") {
+      if(value === "+/-" && numberB.includes("-")) {
+        return;
+      }
+      numberB = "-" + numberB;
+      calculatorDisplay.innerText = numberB;
+    }
   } else if(isOperator(value)) {
     if(numberA && !numberB) {
       operator = value;
       currentInputState = "B";
       calculatorDisplay.innerText = operator;
+    } else if(numberA && numberB) {
+      const result = operate(parseFloat(numberA), parseFloat(numberB), operator);
+      numberA = result
+      numberB = "";
+      operator = value;
+      currentInputState = "B";
+      if(result.length > 8) {
+        calculatorDisplay.innerText = parseFloat(result.toFixed(8));
+      }
+      calculatorDisplay.innerText = parseFloat(result.toFixed(8));
     }
   } else if(value === "=") {
     if(numberA && numberB && operator) {
       const result = operate(parseFloat(numberA), parseFloat(numberB), operator);
-      calculatorDisplay.innerText = result;
+      if(typeof result === "string") {
+        calculatorDisplay.innerText = result;
+        return;
+      }
+      calculatorDisplay.innerText = parseFloat(result.toFixed(8));
+      resetCalculator();
+    } else if(numberA && numberB === "" && operator === "%") {
+      const result = operate(parseFloat(numberA), null, operator);
+      calculatorDisplay.innerText = parseFloat(result.toFixed(8));
       resetCalculator();
     }
   } else if(value === "AC") {
@@ -73,7 +142,7 @@ function handleButtonClick(value) {
 }
 
 function isOperator(value) {
-  return ["+", "-", "*", "/"].includes(value);
+  return ["+", "-", "*", "/", "%"].includes(value);
 };
 
 function resetCalculator() {
@@ -96,8 +165,19 @@ function multiply(a, b) {
 };
 
 function divide(a, b) {
-  return a / b
+  if(a === 0 && b === 0) {
+    return "Sike";
+  }
+  return a / b;
 };
+
+function percentage(a, b) {
+  if(b === null) {
+    return a / 100;
+  } else {
+    return (a * b) / 100;
+  }
+}
 
 function operate(numA, numB, operator) {
 
@@ -118,6 +198,10 @@ function operate(numA, numB, operator) {
       return divide(numA, numB)
       break;
   
+    case "%":
+      return percentage(numA, numB)
+      break;
+    
       default:
       break;
   }
