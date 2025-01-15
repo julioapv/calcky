@@ -3,7 +3,7 @@
 ## Overview
 A simple calculator that let's you perform basic arimethic operations 
 
-Live demo: 
+Live demo: https://julioapv.github.io/calcky/
 
 ![Calcky image](./public/assets/showcase-image.png)
 
