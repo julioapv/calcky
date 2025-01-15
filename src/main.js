@@ -126,6 +126,7 @@ function handleButtonClick(value) {
       const result = operate(parseFloat(numberA), parseFloat(numberB), operator);
       if(typeof result === "string") {
         calculatorDisplay.innerText = result;
+        resetCalculator();
         return;
       }
       calculatorDisplay.innerText = parseFloat(result.toFixed(8));
